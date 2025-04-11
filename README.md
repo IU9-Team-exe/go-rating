@@ -7,7 +7,6 @@
 ```
 project/
 ├── docs/                    # Обоснование выбора формул
-│   ├── formulas.md
 │   ├── formulas.pdf
 │   └── formulas.tex
 ├── rating_system/
