@@ -1,0 +1,184 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Go Rating API",
+      "version": "0.1.0"
+    },
+    "paths": {
+      "/ratings/update": {
+        "post": {
+          "tags": [
+            "rating"
+          ],
+          "summary": "Update Rating",
+          "operationId": "update_rating_ratings_update_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UpdateResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "GameInput": {
+          "properties": {
+            "opp_rating": {
+              "type": "number",
+              "title": "Opp Rating",
+              "description": "Рейтинг оппонента"
+            },
+            "opp_rd": {
+              "type": "number",
+              "title": "Opp Rd",
+              "description": "RD оппонента"
+            },
+            "result": {
+              "type": "number",
+              "title": "Result",
+              "description": "Результат от лица игрока"
+            }
+          },
+          "type": "object",
+          "required": [
+            "opp_rating",
+            "opp_rd",
+            "result"
+          ],
+          "title": "GameInput"
+        },
+        "HTTPValidationError": {
+          "properties": {
+            "detail": {
+              "items": {
+                "$ref": "#/components/schemas/ValidationError"
+              },
+              "type": "array",
+              "title": "Detail"
+            }
+          },
+          "type": "object",
+          "title": "HTTPValidationError"
+        },
+        "UpdateRequest": {
+          "properties": {
+            "rating": {
+              "type": "number",
+              "title": "Rating",
+              "description": "Рейтинг игрока"
+            },
+            "rd": {
+              "type": "number",
+              "title": "Rd",
+              "description": "RD игрока"
+            },
+            "volatility": {
+              "type": "number",
+              "title": "Volatility",
+              "description": "Волатильность игрока"
+            },
+            "games": {
+              "items": {
+                "$ref": "#/components/schemas/GameInput"
+              },
+              "type": "array",
+              "title": "Games"
+            }
+          },
+          "type": "object",
+          "required": [
+            "rating",
+            "rd",
+            "volatility",
+            "games"
+          ],
+          "title": "UpdateRequest"
+        },
+        "UpdateResponse": {
+          "properties": {
+            "new_rating": {
+              "type": "number",
+              "title": "New Rating"
+            },
+            "new_rd": {
+              "type": "number",
+              "title": "New Rd"
+            },
+            "new_volatility": {
+              "type": "number",
+              "title": "New Volatility"
+            }
+          },
+          "type": "object",
+          "required": [
+            "new_rating",
+            "new_rd",
+            "new_volatility"
+          ],
+          "title": "UpdateResponse"
+        },
+        "ValidationError": {
+          "properties": {
+            "loc": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array",
+              "title": "Location"
+            },
+            "msg": {
+              "type": "string",
+              "title": "Message"
+            },
+            "type": {
+              "type": "string",
+              "title": "Error Type"
+            }
+          },
+          "type": "object",
+          "required": [
+            "loc",
+            "msg",
+            "type"
+          ],
+          "title": "ValidationError"
+        }
+      }
+    }
+  }
+  
