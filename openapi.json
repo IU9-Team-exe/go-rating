@@ -1,47 +1,22 @@
 {
     "openapi": "3.1.0",
     "info": {
-      "title": "Go Rating System API",
+      "title": "Go Rating API",
       "version": "0.1.0"
     },
     "paths": {
-      "/users": {
-        "get": {
-          "summary": "Get Users",
-          "description": "Возвращает список всех пользователей с текущими значениями рейтингов, RD и волатильности.",
-          "operationId": "get_users_users_get",
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "items": {
-                      "$ref": "#/components/schemas/UserOut"
-                    },
-                    "type": "array",
-                    "title": "Response Get Users Users Get"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
       "/ratings/update": {
         "post": {
-          "summary": "Update Ratings",
-          "description": "Пересчет рейтингов по итогам партий. Получает список игр, где каждая игра задается\nидентификаторами игроков и результатом (от лица первого игрока).\n\nАлгоритм:\n\n1. Загружаются все пользователи из БД.\n2. Формируются массивы рейтингов, RD и волатильности с одинаковым порядком.\n3. Для каждой игры определяется индекс игрока в массиве на основе сопоставления с ID.\n4. Вызывается функция update_ratings_vectorized для пакетного обновления.\n5. Результаты записываются обратно в БД.",
-          "operationId": "update_ratings_ratings_update_post",
+          "tags": [
+            "rating"
+          ],
+          "summary": "Update Rating",
+          "operationId": "update_rating_ratings_update_post",
           "requestBody": {
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/GameResult"
-                  },
-                  "type": "array",
-                  "title": "Games"
+                  "$ref": "#/components/schemas/UpdateRequest"
                 }
               }
             },
@@ -53,7 +28,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-  
+                    "$ref": "#/components/schemas/UpdateResponse"
                   }
                 }
               }
@@ -74,28 +49,31 @@
     },
     "components": {
       "schemas": {
-        "GameResult": {
+        "GameInput": {
           "properties": {
-            "player1_id": {
-              "type": "integer",
-              "title": "Player1 Id"
+            "opp_rating": {
+              "type": "number",
+              "title": "Opp Rating",
+              "description": "Рейтинг оппонента"
             },
-            "player2_id": {
-              "type": "integer",
-              "title": "Player2 Id"
+            "opp_rd": {
+              "type": "number",
+              "title": "Opp Rd",
+              "description": "RD оппонента"
             },
             "result": {
               "type": "number",
-              "title": "Result"
+              "title": "Result",
+              "description": "Результат от лица игрока"
             }
           },
           "type": "object",
           "required": [
-            "player1_id",
-            "player2_id",
+            "opp_rating",
+            "opp_rd",
             "result"
           ],
-          "title": "GameResult"
+          "title": "GameInput"
         },
         "HTTPValidationError": {
           "properties": {
@@ -110,33 +88,62 @@
           "type": "object",
           "title": "HTTPValidationError"
         },
-        "UserOut": {
+        "UpdateRequest": {
           "properties": {
-            "id": {
-              "type": "integer",
-              "title": "Id"
-            },
             "rating": {
               "type": "number",
-              "title": "Rating"
+              "title": "Rating",
+              "description": "Рейтинг игрока"
             },
             "rd": {
               "type": "number",
-              "title": "Rd"
+              "title": "Rd",
+              "description": "RD игрока"
             },
             "volatility": {
               "type": "number",
-              "title": "Volatility"
+              "title": "Volatility",
+              "description": "Волатильность игрока"
+            },
+            "games": {
+              "items": {
+                "$ref": "#/components/schemas/GameInput"
+              },
+              "type": "array",
+              "title": "Games"
             }
           },
           "type": "object",
           "required": [
-            "id",
             "rating",
             "rd",
-            "volatility"
+            "volatility",
+            "games"
           ],
-          "title": "UserOut"
+          "title": "UpdateRequest"
+        },
+        "UpdateResponse": {
+          "properties": {
+            "new_rating": {
+              "type": "number",
+              "title": "New Rating"
+            },
+            "new_rd": {
+              "type": "number",
+              "title": "New Rd"
+            },
+            "new_volatility": {
+              "type": "number",
+              "title": "New Volatility"
+            }
+          },
+          "type": "object",
+          "required": [
+            "new_rating",
+            "new_rd",
+            "new_volatility"
+          ],
+          "title": "UpdateResponse"
         },
         "ValidationError": {
           "properties": {
@@ -174,3 +181,4 @@
       }
     }
   }
+  
