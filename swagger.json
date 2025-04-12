@@ -1,0 +1,176 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Go Rating System API",
+      "version": "0.1.0"
+    },
+    "paths": {
+      "/users": {
+        "get": {
+          "summary": "Get Users",
+          "description": "Возвращает список всех пользователей с текущими значениями рейтингов, RD и волатильности.",
+          "operationId": "get_users_users_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "items": {
+                      "$ref": "#/components/schemas/UserOut"
+                    },
+                    "type": "array",
+                    "title": "Response Get Users Users Get"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/ratings/update": {
+        "post": {
+          "summary": "Update Ratings",
+          "description": "Пересчет рейтингов по итогам партий. Получает список игр, где каждая игра задается\nидентификаторами игроков и результатом (от лица первого игрока).\n\nАлгоритм:\n\n1. Загружаются все пользователи из БД.\n2. Формируются массивы рейтингов, RD и волатильности с одинаковым порядком.\n3. Для каждой игры определяется индекс игрока в массиве на основе сопоставления с ID.\n4. Вызывается функция update_ratings_vectorized для пакетного обновления.\n5. Результаты записываются обратно в БД.",
+          "operationId": "update_ratings_ratings_update_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/GameResult"
+                  },
+                  "type": "array",
+                  "title": "Games"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+  
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "GameResult": {
+          "properties": {
+            "player1_id": {
+              "type": "integer",
+              "title": "Player1 Id"
+            },
+            "player2_id": {
+              "type": "integer",
+              "title": "Player2 Id"
+            },
+            "result": {
+              "type": "number",
+              "title": "Result"
+            }
+          },
+          "type": "object",
+          "required": [
+            "player1_id",
+            "player2_id",
+            "result"
+          ],
+          "title": "GameResult"
+        },
+        "HTTPValidationError": {
+          "properties": {
+            "detail": {
+              "items": {
+                "$ref": "#/components/schemas/ValidationError"
+              },
+              "type": "array",
+              "title": "Detail"
+            }
+          },
+          "type": "object",
+          "title": "HTTPValidationError"
+        },
+        "UserOut": {
+          "properties": {
+            "id": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "rating": {
+              "type": "number",
+              "title": "Rating"
+            },
+            "rd": {
+              "type": "number",
+              "title": "Rd"
+            },
+            "volatility": {
+              "type": "number",
+              "title": "Volatility"
+            }
+          },
+          "type": "object",
+          "required": [
+            "id",
+            "rating",
+            "rd",
+            "volatility"
+          ],
+          "title": "UserOut"
+        },
+        "ValidationError": {
+          "properties": {
+            "loc": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array",
+              "title": "Location"
+            },
+            "msg": {
+              "type": "string",
+              "title": "Message"
+            },
+            "type": {
+              "type": "string",
+              "title": "Error Type"
+            }
+          },
+          "type": "object",
+          "required": [
+            "loc",
+            "msg",
+            "type"
+          ],
+          "title": "ValidationError"
+        }
+      }
+    }
+  }
